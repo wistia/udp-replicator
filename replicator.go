@@ -45,6 +45,10 @@ func main() {
 
 	// Clients
 	for _, forward := range *forwards {
+		// Enclose in square-brackets if IPv6 address
+		if isIPv6Address(forward) {
+			forward = fmt.Sprintf("[%s]", forward)
+		}
 		// Check for port
 		if strings.Index(forward, ":") < 0 {
 			forward = fmt.Sprintf("%s:%d", forward, *listenPort)
@@ -122,4 +126,9 @@ func main() {
 			}
 		}
 	}
+}
+
+func isIPv6Address(address string) bool {
+	ip := net.ParseIP(address)
+	return ip != nil && strings.Contains(address, ":") && strings.Count(address, "::") <= 1
 }
